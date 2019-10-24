@@ -14,12 +14,12 @@ template <class T> class Dinic {
     std::vector<std::vector<Edge>> graph;
     std::vector<int> level;
     std::vector<int> iter;
-
-  	void bfs(int s) {
+    
+    void bfs(int s) {
       level.assign(level.size(), -1);
 
       std::queue<int> que;
-    	level[s] = 0;
+      level[s] = 0;
       que.push(s);
 
       while(!que.empty()) {
@@ -28,10 +28,10 @@ template <class T> class Dinic {
 
         for(auto &e : graph[v]) {
           if(e.cap > 0 && level[e.to] < 0) {
-						level[e.to] = level[v] + 1;
-						que.push(e.to);
-					}
-				}
+            level[e.to] = level[v] + 1;
+            que.push(e.to);
+          }
+        }
       }
     }
 
@@ -44,10 +44,10 @@ template <class T> class Dinic {
         if(e.cap > 0 && level[v] < level[e.to]) {
           int d = dfs(e.to, t, min(f, e.cap));
           if(d > 0) {
-						e.cap -= d;
-						graph[e.to][e.rev].cap += d;
+            e.cap -= d;
+            graph[e.to][e.rev].cap += d;
             return d;
-					}
+          }
         }
       }
       return 0;
@@ -58,7 +58,7 @@ template <class T> class Dinic {
       graph = std::vector<std::vector<Edge>>(v);
       level = std::vector<int>(v);
       iter = std::vector<int>(v);
-  	}
+    }
 
     void add_edge(int from, int to, T cap) {
       graph[from].emplace_back(to, cap, graph[to].size());
