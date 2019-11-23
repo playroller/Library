@@ -171,19 +171,4 @@ template <class T> class FibonacciHeap {
       h.sz = h1.sz + h2.sz;
       return h;
     }
-
-    void debug() {
-      if(min == NULL) return;
-
-      std::vector<node_ptr> rootList;
-      rootList.emplace_back(min);
-      while(rootList[rootList.size() - 1]->right.lock() != rootList[0]) {
-        node_ptr lastRight = rootList[rootList.size() - 1]->right.lock();
-        rootList.emplace_back(lastRight);
-      }
-
-      cout << "rootList : \n";
-      for(auto &node : rootList) cout << node->key << " " << node.use_count() << endl;
-      cout << endl << endl;
-    }
 };
