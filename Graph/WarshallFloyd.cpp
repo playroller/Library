@@ -1,33 +1,25 @@
 #include <vector>
 #include <iostream>
 
-class WarshallFloyd {
-  private:
-    std::vector<std::vector<int>> d;
-    int v;
+std::vector<std::vector<int>> dist;
 
-  public:
-    WarshallFloyd(int n) : v(n), d(n, std::vector<int>(n, 1e9)) {
-      for(int i = 0; i < v; ++i)
-        d[i][i] = 0;
-    }
+void init(int n) {
+  dist = std::vector<std::vector<int>>(n, std::vector<int>(n, 1e9));
+  for(int i = 0; i < n; ++i) dist[i][i] = 0;
+}
 
-    void add(int from, int to, int cost) {
-      d[from][to] = cost;
-      d[to][from] = cost;
-    }
+void add(int from, int to, int cost) {
+  dist[from][to] = cost;
+  dist[to][from] = cost;
+}
 
-    void warshall_froyd() {
-      for(int k = 0; k < v; ++k) {
-        for(int i = 0; i < v; ++i) {
-          for(int j = 0; j < v; ++j) {
-            d[i][j] = std::min(d[i][j], d[i][k] + d[k][j]);
-          }
-        }
+void warshall_froyd() {
+  int v = dist.size();
+  for(int k = 0; k < v; ++k) {
+    for(int i = 0; i < v; ++i) {
+      for(int j = 0; j < v; ++j) {
+        dist[i][j] = std::min(dist[i][j], dist[i][k] + dist[k][j]);
       }
     }
-
-    int dist(int i, int j) {
-      return d[i][j];
-    }
-};
+  }
+}
