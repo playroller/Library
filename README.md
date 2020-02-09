@@ -24,6 +24,17 @@
 
 # 数学
 
+* [素数判定](https://github.com/playroller/library/blob/master/Math/Prime.cpp)
+* [素数テーブル](https://github.com/playroller/library/blob/master/Math/PrimeTable.cpp)
+* [素因数分解](https://github.com/playroller/library/blob/master/Math/PrimeFactor.cpp)
+* [約数列挙](https://github.com/playroller/library/blob/master/Math/Divisor.cpp)
+* [繰り返し二乗法](https://github.com/playroller/library/blob/master/Math/Power.cpp)
+* [拡張ユークリッドの互除法](https://github.com/playroller/library/blob/master/Math/extgcd.cpp)
 * [二項係数](https://github.com/playroller/library/blob/master/Math/Combination.cpp)
 * [高速フーリエ変換](https://github.com/playroller/library/blob/master/Math/FastFourierTransform.cpp)
 * [中国剰余定理](https://github.com/playroller/library/blob/master/Math/ChineseRemainderTheorem.cpp)
+
+
+# その他
+
+* [ModInt](https://github.com/ei1333/library/blob/master/math/combinatorics/mod-int.cpp)
