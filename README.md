@@ -37,4 +37,4 @@
 
 # その他
 
-* [ModInt](https://github.com/ei1333/library/blob/master/math/combinatorics/mod-int.cpp)
+* [ModInt](https://github.com/playroller/library/blob/master/ModInt.cpp)
