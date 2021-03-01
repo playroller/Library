@@ -15,14 +15,6 @@ template <class T> class FibonacciHeap {
       weak_node left;
       node_ptr child;
       bool mark = false;
-
-      ~Node() {
-        right.reset();
-        if(degree > 0) {
-          child->right.reset();
-          child.reset();
-        }
-      }
     };
 
     node_ptr min = NULL;
@@ -167,8 +159,10 @@ template <class T> class FibonacciHeap {
     };
 
     ~FibonacciHeap() {
-      min->right.reset();
-      min.reset();
+      if(min != NULL) {
+        min->right.reset();
+        min.reset();
+      }
     }
 
     bool empty() {
@@ -186,11 +180,14 @@ template <class T> class FibonacciHeap {
     void pop() {
       node_ptr z = min;
 
-      node_ptr child = z->child;
-      for(int i = 0; i < z->degree; ++i) {
-        addRoot(child);
-        child->parent.reset();
-        child = child->right;
+      if(z->degree > 0) {
+        node_ptr lchild = z->child;
+        node_ptr rchild = lchild->left.lock();
+        node_ptr l = min->left.lock();
+        l ->right = lchild;
+        lchild->left = l;
+        min->left = rchild;
+        rchild->right = min;
       }
 
       if(sz == 1) {
