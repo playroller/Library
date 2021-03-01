@@ -11,8 +11,7 @@ template <class T> class FibonacciHeap {
       T key;
       int degree = 0;
       weak_node parent;
-      node_ptr right_shared;
-      weak_node right;
+      node_ptr right;
       weak_node left;
       node_ptr child;
       bool mark = false;
@@ -32,8 +31,7 @@ template <class T> class FibonacciHeap {
       }
 
       node_ptr l = min->left.lock();
-      l->right_shared = x;
-      l->right = x;
+      l->right= x;
       min->left = x;
 
       x->right = min;
@@ -41,24 +39,12 @@ template <class T> class FibonacciHeap {
     }
 
     void removeRoot(node_ptr x) {
-      if(x->right_shared) {
-        node_ptr r = x->right_shared;
-        node_ptr l = x->left.lock();
+      node_ptr r = x->right;
+      node_ptr l = x->left.lock();
 
-        r->left = l;
-        l->right_shared = r;
-        l->right = r;
-
-        x->right_shared.reset();
-      }
-      else if(!x->right_shared) {
-        node_ptr r = x->right.lock();
-        node_ptr l = x->left.lock();
-
-        r->left = l;
-        l->right = r;
-        l->right_shared.reset();
-      }
+      r->left = l;
+      l->right = r;
+      x->right.reset();
     }
 
     void addChild(node_ptr child, node_ptr parent) {
@@ -72,7 +58,6 @@ template <class T> class FibonacciHeap {
       else {
         node_ptr pchild = parent->child;
         node_ptr l = pchild->left.lock();
-        l->right_shared = child;
         l->right = child;
         pchild->left = child;
 
@@ -89,48 +74,36 @@ template <class T> class FibonacciHeap {
           parent->child.reset();
         }
         else {
-          node_ptr r = child->right_shared;
+          node_ptr r = child->right;
           node_ptr l = child->left.lock();
           parent->child = r;
           r->left = l;
           l->right = r;
-          child->right_shared.reset();
+          child->right.reset();
         }
       }
-      else if(parent->child == child->right.lock()) {
+      else if(parent->child == child->right) {
         node_ptr l = child->left.lock();
         l->right = parent->child;
-        l->right_shared.reset();
+        l->right.reset();
         parent->child->left = l;
       }
       else {
         node_ptr l = child->left.lock();
-        l->right = child->right_shared;
-        l->right_shared = child->right_shared;
-        child->right_shared->left = l;
-        child->right_shared.reset();
+        l->right = child->right;
+        child->right->left = l;
+        child->right.reset();
       }
       parent->degree--;
       child->parent.reset();
-    }
-
-    void minUpdate(node_ptr x) {
-      node_ptr l = min->left.lock();
-      l->right_shared = min;
-      l->right = min;
-
-      l = x->left.lock();
-      l->right = x;
-      l->right_shared.reset();
-      min = x;
     }
 
     void consolidate() {
       std::vector<node_ptr> rootList;
       rootList.emplace_back(min);
 
-      while(rootList[rootList.size() - 1]->right.lock() != rootList[0]) {
-        node_ptr lastRight = rootList[rootList.size() - 1]->right_shared;
+      while(rootList[rootList.size() - 1]->right != rootList[0]) {
+        node_ptr lastRight = rootList[rootList.size() - 1]->right;
         rootList.emplace_back(lastRight);
       }
 
@@ -163,12 +136,11 @@ template <class T> class FibonacciHeap {
         if(min == NULL) {
           node->right = node;
           node->left = node;
-          node->right_shared.reset();
           min = node;
         }
         else {
           addRoot(node);
-          if(node->key < min->key) minUpdate(node);
+          if(node->key < min->key) min = node;
         }
       }
     }
@@ -186,6 +158,13 @@ template <class T> class FibonacciHeap {
       }
     };
 
+    ~FibonacciHeap() {
+      if(min != NULL) {
+        min->right.reset();
+        min.reset();
+      }
+    }
+
     bool empty() {
       return (sz == 0);
     }
@@ -201,17 +180,23 @@ template <class T> class FibonacciHeap {
     void pop() {
       node_ptr z = min;
 
-      node_ptr child = z->child;
-      for(int i = 0; i < z->degree; ++i) {
-        addRoot(child);
-        child->parent.reset();
-        child = child->right_shared;
+      if(z->degree > 0) {
+        node_ptr lchild = z->child;
+        node_ptr rchild = lchild->left.lock();
+        node_ptr l = min->left.lock();
+        l ->right = lchild;
+        lchild->left = l;
+        min->left = rchild;
+        rchild->right = min;
       }
 
-      removeRoot(z);
-      if(sz == 1) min = NULL;
+      if(sz == 1) {
+        removeRoot(z);
+        min = NULL;
+      }
       else {
-        min = z->right.lock();
+        min = z->right;
+        removeRoot(z);
         consolidate();
       }
       sz--;
@@ -222,7 +207,7 @@ template <class T> class FibonacciHeap {
       x->key = key;
       
       addRoot(x);
-      if(x->key < min->key) minUpdate(x);
+      if(x->key < min->key) min = x;
       sz++;
 
       pointer ptr;
@@ -249,7 +234,7 @@ template <class T> class FibonacciHeap {
         if(!isRoot(child)) parent->mark = true;
       }
 
-      if(x->key < min->key) minUpdate(x);
+      if(x->key < min->key) min = x;
     }
 
     static FibonacciHeap merge(FibonacciHeap &h1, FibonacciHeap &h2) {
