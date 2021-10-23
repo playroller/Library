@@ -46,9 +46,9 @@ template <std::int_fast64_t MOD> class ModInt {
 
     ModInt operator/(const ModInt &x) const { return ModInt(*this) /= x; }
 
-    bool operator==(const ModInt *x) const { return value == x.value; }
+    bool operator==(const ModInt &x) const { return value == x.value; }
 
-    bool operator!=(const ModInt *x) const { return value != x.value; }
+    bool operator!=(const ModInt &x) const { return value != x.value; }
 
     ModInt inverse() const {
       std::int_fast64_t a = value, b = MOD, u = 1, v = 0, t;
