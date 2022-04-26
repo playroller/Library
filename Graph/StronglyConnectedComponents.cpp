@@ -57,9 +57,9 @@ class StronglyConnectedComponents {
     }
 
     std::vector<int> get_component_size() {
-      if(component_size.size() == 0) return component_size;
+      if(component_size.size() > 0) return component_size;
 
-      int n = *std::max_element(component.begin(), component.end());
+      int n = *std::max_element(component.begin(), component.end()) + 1;
       component_size = std::vector<int>(n, 0);
 
       for(int v = 0; v < sz; ++v) {
