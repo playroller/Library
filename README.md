@@ -10,7 +10,7 @@
 * [Segment-Tree](https://github.com/playroller/library/blob/master/DataStructure/SegmentTree.cpp)
 * [遅延評価付きSegment-Tree](https://github.com/playroller/library/blob/master/DataStructure/LazySegmentTree.cpp)
 * [Binary-Indexed-Tree](https://github.com/playroller/library/blob/master/DataStructure/BinaryIndexedTree.cpp)
-* [Fibonacci-Heap(未完)](https://github.com/playroller/library/blob/master/DataStructure/FibonacciHeap.cpp)
+* [Fibonacci-Heap(いつか完成させる)](https://github.com/playroller/library/blob/master/DataStructure/FibonacciHeap.cpp)
 
 
 # グラフ
